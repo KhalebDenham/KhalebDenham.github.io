@@ -5,7 +5,7 @@
     <script src="{{ '/assets/js/jquery.magnific-popup.min.js' | relative_url }}"></script>
     <script src="{{ '/assets/js/jquery.fitvid.min.js' | relative_url }}"></script>
     <script src="{{ '/assets/js/scripts.js' | relative_url }}"></script>
-    {% if page.url == '/projects/snake-game/' %}
+    {% if page.url == '/projects/snake-game/' or page.permalink == '/projects/snake-game/' or page.title == 'Snake Game' %}
     <script src="{{ '/assets/js/snake-game.js' | relative_url }}"></script>
     {% endif %}
     {% if site.google.analytics %}
