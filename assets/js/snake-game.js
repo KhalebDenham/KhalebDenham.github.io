@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const nicknameInput = document.getElementById('snakeNicknameInput');
   const nicknameError = document.getElementById('snakeNicknameError');
   const nicknameSaved = document.getElementById('snakeNicknameSaved');
-  const nicknameDisplay = document.getElementById('snakeNicknameDisplay');
   const playerLabel = document.getElementById('snakePlayerLabel');
   const startButton = document.getElementById('snakeStart');
   const leaderboardEl = document.getElementById('snakeLeaderboard');
@@ -29,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let gameActive = false;
   let timer = null;
   let currentPlayer = '';
+  let overlayMode = 'start';
 
   function setText() {
     scoreEl.textContent = `Score: ${score}`;
@@ -66,18 +66,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateOverlay(type) {
     overlay.classList.add('visible');
+    overlayMode = type;
     if (type === 'start') {
-      overlayTitle.textContent = 'Enter your 3-character nickname';
-      overlayMessage.textContent = 'Your score will be saved with a 3-character name.';
+      overlayTitle.textContent = 'Ready to play?';
+      overlayMessage.textContent = 'Click Start to begin the game.';
       startButton.textContent = 'Start';
+      nicknameInput.hidden = true;
+      nicknameError.hidden = true;
+      nicknameSaved.hidden = true;
+    } else if (type === 'gameover') {
+      overlayTitle.textContent = 'Game Over';
+      overlayMessage.textContent = `Your score is ${score}. Enter a 3-character nickname to save it.`;
+      startButton.textContent = 'Save';
       nicknameInput.hidden = false;
       nicknameError.hidden = false;
       nicknameSaved.hidden = true;
-    } else {
-      overlayTitle.textContent = 'Game Over';
-      overlayMessage.textContent = currentPlayer
-        ? `Player ${currentPlayer} score saved. Press Restart to play again.`
-        : 'Game over. Press Restart to play again.';
+    } else if (type === 'saved') {
+      overlayTitle.textContent = 'Score saved!';
+      overlayMessage.textContent = 'Nickname saved! Click Restart to play again.';
       startButton.textContent = 'Restart';
       nicknameInput.hidden = true;
       nicknameError.hidden = true;
@@ -105,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
     nicknameInput.hidden = true;
     nicknameError.hidden = true;
     nicknameSaved.hidden = false;
-    nicknameDisplay.textContent = name;
     playerLabel.textContent = `Player: ${name}`;
   }
 
@@ -179,8 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
     highScore = loadHighScoreFromLeaderboard();
   }
 
-  function attemptStart(directionHint) {
-    const nickname = sanitizeNickname(nicknameInput.value || getStoredNickname());
+  function saveNickname() {
+    const nickname = sanitizeNickname(nicknameInput.value);
 
     if (!validateNickname(nickname)) {
       updateNicknameError('Please enter exactly 3 letters or digits.');
@@ -191,12 +196,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setStoredNickname(currentPlayer);
     updateNicknameError('');
     showNicknameSaved(currentPlayer);
-
-    if (directionHint) {
-      nextDirection = directionHint;
-    }
-
-    startGame();
+    recordScore();
+    renderLeaderboard();
+    setText();
+    updateOverlay('saved');
     return true;
   }
 
@@ -208,6 +211,11 @@ document.addEventListener('DOMContentLoaded', () => {
     snake = [{ x: 15, y: 15 }];
     placeFood();
     gameActive = true;
+    nicknameInput.value = '';
+    updateNicknameError('');
+    nicknameInput.hidden = true;
+    nicknameSaved.hidden = true;
+    playerLabel.textContent = `Player: ${currentPlayer || '—'}`;
     setText();
     hideOverlay();
     draw();
@@ -268,7 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (score > highScore) {
       highScore = score;
     }
-    recordScore();
     setText();
     renderLeaderboard();
     updateOverlay('gameover');
@@ -291,9 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     if (!gameActive) {
-      if (directionMap[key]) {
-        setDirection(directionMap[key]);
-      }
       return;
     }
 
@@ -302,7 +306,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  startButton.addEventListener('click', () => attemptStart());
+  startButton.addEventListener('click', () => {
+    if (overlayMode === 'start') {
+      startGame();
+    } else if (overlayMode === 'gameover') {
+      saveNickname();
+    } else if (overlayMode === 'saved') {
+      startGame();
+    }
+  });
 
   const storedNickname = getStoredNickname();
   if (storedNickname) {

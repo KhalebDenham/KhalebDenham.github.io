@@ -16,12 +16,12 @@ comments: false
     <canvas id="snakeCanvas" width="600" height="600"></canvas>
     <div id="snakeOverlay" class="snake-overlay visible">
       <div class="snake-overlay-card">
-        <h2 id="snakeOverlayTitle">Enter your 3-character nickname</h2>
-        <p id="snakeOverlayMessage">Your score will be saved with a 3-character name.</p>
-        <input id="snakeNicknameInput" class="snake-input" maxlength="3" placeholder="ABC" autocomplete="off" />
-        <div id="snakeNicknameError" class="snake-error"></div>
+        <h2 id="snakeOverlayTitle">Ready to play?</h2>
+        <p id="snakeOverlayMessage">Click Start to begin the game.</p>
+        <input id="snakeNicknameInput" class="snake-input" maxlength="3" placeholder="ABC" autocomplete="off" hidden />
+        <div id="snakeNicknameError" class="snake-error" hidden></div>
         <div id="snakeNicknameSaved" class="snake-saved-name" hidden>
-          Nickname saved: <strong id="snakeNicknameDisplay"></strong>
+          Nickname saved!
         </div>
         <button id="snakeStart" class="snake-button">Start</button>
       </div>
@@ -138,8 +138,8 @@ comments: false
   margin-bottom: 16px;
   padding: 12px 14px;
   border-radius: 12px;
-  background: rgba(90, 146, 193, 0.12);
-  color: #1d3f5c;
+  background: #f2f4f7;
+  color: #6c757d;
   font-weight: 700;
 }
 .snake-scoreboard {
