@@ -7,9 +7,7 @@ categories: jekyll update
 
 
 
-USS Enterprise
-Stardate: -296945.63
-Location: Somewhere on earth...
+The One with the Slithering...
 
 
 ![Creature of Looseness](![alt text](image.png))
