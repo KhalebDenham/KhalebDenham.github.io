@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let score = 0;
   let highScore = 0;
   let speed = BASE_SPEED_MS;
-  let direction = { x: 0, y: 0 };
-  let nextDirection = { x: 0, y: 0 };
+  let direction = { x: 1, y: 0 };
+  let nextDirection = { x: 1, y: 0 };
   let snake = [{ x: 15, y: 15 }];
   let food = { x: 10, y: 10 };
   let gameActive = true;
@@ -75,8 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function resetGame() {
     score = 0;
     speed = BASE_SPEED_MS;
-    direction = { x: 0, y: 0 };
-    nextDirection = { x: 0, y: 0 };
+    direction = { x: 1, y: 0 };
+    nextDirection = { x: 1, y: 0 };
     snake = [{ x: 15, y: 15 }];
     placeFood();
     gameActive = true;
@@ -136,10 +136,22 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     switch (key) {
-      case 'w': setDirection({ x: 0, y: -1 }); break;
-      case 's': setDirection({ x: 0, y: 1 }); break;
-      case 'a': setDirection({ x: -1, y: 0 }); break;
-      case 'd': setDirection({ x: 1, y: 0 }); break;
+      case 'w':
+      case 'arrowup':
+        setDirection({ x: 0, y: -1 });
+        break;
+      case 's':
+      case 'arrowdown':
+        setDirection({ x: 0, y: 1 });
+        break;
+      case 'a':
+      case 'arrowleft':
+        setDirection({ x: -1, y: 0 });
+        break;
+      case 'd':
+      case 'arrowright':
+        setDirection({ x: 1, y: 0 });
+        break;
     }
   });
 
