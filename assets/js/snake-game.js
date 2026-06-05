@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const overlayMessage = document.getElementById('snakeOverlayMessage');
   const nicknameInput = document.getElementById('snakeNicknameInput');
   const nicknameError = document.getElementById('snakeNicknameError');
+  const nicknameSaved = document.getElementById('snakeNicknameSaved');
+  const nicknameDisplay = document.getElementById('snakeNicknameDisplay');
+  const playerLabel = document.getElementById('snakePlayerLabel');
   const startButton = document.getElementById('snakeStart');
   const leaderboardEl = document.getElementById('snakeLeaderboard');
 
@@ -67,10 +70,18 @@ document.addEventListener('DOMContentLoaded', () => {
       overlayTitle.textContent = 'Enter your 3-character nickname';
       overlayMessage.textContent = 'Your score will be saved with a 3-character name.';
       startButton.textContent = 'Start';
+      nicknameInput.hidden = false;
+      nicknameError.hidden = false;
+      nicknameSaved.hidden = true;
     } else {
       overlayTitle.textContent = 'Game Over';
-      overlayMessage.textContent = 'Press Restart, R, or any movement key to play again.';
+      overlayMessage.textContent = currentPlayer
+        ? `Player ${currentPlayer} score saved. Press Restart to play again.`
+        : 'Game over. Press Restart to play again.';
       startButton.textContent = 'Restart';
+      nicknameInput.hidden = true;
+      nicknameError.hidden = true;
+      nicknameSaved.hidden = false;
     }
   }
 
@@ -88,6 +99,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateNicknameError(message) {
     nicknameError.textContent = message;
+  }
+
+  function showNicknameSaved(name) {
+    nicknameInput.hidden = true;
+    nicknameError.hidden = true;
+    nicknameSaved.hidden = false;
+    nicknameDisplay.textContent = name;
+    playerLabel.textContent = `Player: ${name}`;
   }
 
   function loadLeaderboard() {
@@ -171,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentPlayer = nickname;
     setStoredNickname(currentPlayer);
     updateNicknameError('');
+    showNicknameSaved(currentPlayer);
 
     if (directionHint) {
       nextDirection = directionHint;

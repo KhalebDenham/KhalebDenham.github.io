@@ -8,6 +8,7 @@ comments: false
 
 <div class="snake-game-shell">
   <div class="snake-game-status">
+    <span id="snakePlayerLabel">Player: —</span>
     <span id="snakeScore">Score: 0</span>
     <span id="snakeHighScore">High Score: 0</span>
   </div>
@@ -19,6 +20,9 @@ comments: false
         <p id="snakeOverlayMessage">Your score will be saved with a 3-character name.</p>
         <input id="snakeNicknameInput" class="snake-input" maxlength="3" placeholder="ABC" autocomplete="off" />
         <div id="snakeNicknameError" class="snake-error"></div>
+        <div id="snakeNicknameSaved" class="snake-saved-name" hidden>
+          Nickname saved: <strong id="snakeNicknameDisplay"></strong>
+        </div>
         <button id="snakeStart" class="snake-button">Start</button>
       </div>
     </div>
@@ -129,6 +133,14 @@ comments: false
   margin-bottom: 16px;
   color: #b63c47;
   font-size: 14px;
+}
+.snake-saved-name {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(90, 146, 193, 0.12);
+  color: #1d3f5c;
+  font-weight: 700;
 }
 .snake-scoreboard {
   max-width: 680px;
