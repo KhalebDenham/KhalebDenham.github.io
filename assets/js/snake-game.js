@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const scoreEl = document.getElementById('snakeScore');
   const highScoreEl = document.getElementById('snakeHighScore');
   const overlay = document.getElementById('snakeOverlay');
-  const restartButton = document.getElementById('snakeRestart');
+  const overlayTitle = document.getElementById('snakeOverlayTitle');
+  const overlayMessage = document.getElementById('snakeOverlayMessage');
+  const startButton = document.getElementById('snakeStart');
 
   const GRID = 20;
   const TILE_COUNT = 30;
@@ -14,11 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let score = 0;
   let highScore = 0;
   let speed = BASE_SPEED_MS;
-  let direction = { x: 1, y: 0 };
-  let nextDirection = { x: 1, y: 0 };
+  let direction = { x: 0, y: 0 };
+  let nextDirection = { x: 0, y: 0 };
   let snake = [{ x: 15, y: 15 }];
   let food = { x: 10, y: 10 };
-  let gameActive = true;
+  let gameActive = false;
   let timer = null;
 
   function setText() {
@@ -31,20 +33,21 @@ document.addEventListener('DOMContentLoaded', () => {
       x: Math.floor(Math.random() * TILE_COUNT),
       y: Math.floor(Math.random() * TILE_COUNT),
     };
+
     if (snake.some(segment => segment.x === food.x && segment.y === food.y)) {
       placeFood();
     }
   }
 
   function draw() {
-    ctx.fillStyle = '#f7f1dc';
+    ctx.fillStyle = '#eef7ff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = '#f9f2c5';
+    ctx.fillStyle = '#fde6b5';
     ctx.fillRect(food.x * GRID, food.y * GRID, GRID, GRID);
 
     for (const [index, segment] of snake.entries()) {
-      ctx.fillStyle = index === 0 ? '#22303c' : '#3d4855';
+      ctx.fillStyle = index === 0 ? '#1d3f5c' : '#5a7a98';
       ctx.fillRect(segment.x * GRID + 1, segment.y * GRID + 1, GRID - 2, GRID - 2);
     }
   }
@@ -54,8 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
     timer = null;
   }
 
-  function showOverlay() {
+  function updateOverlay(type) {
     overlay.classList.add('visible');
+    if (type === 'start') {
+      overlayTitle.textContent = 'Ready to play?';
+      overlayMessage.textContent = 'Press Start or use arrow keys/WASD to begin.';
+      startButton.textContent = 'Start';
+    } else {
+      overlayTitle.textContent = 'Game Over';
+      overlayMessage.textContent = 'Press Restart, R, or any movement key to play again.';
+      startButton.textContent = 'Restart';
+    }
   }
 
   function hideOverlay() {
@@ -68,15 +80,15 @@ document.addEventListener('DOMContentLoaded', () => {
       highScore = score;
     }
     setText();
-    showOverlay();
+    updateOverlay('gameover');
     stopLoop();
   }
 
-  function resetGame() {
+  function startGame() {
     score = 0;
     speed = BASE_SPEED_MS;
-    direction = { x: 1, y: 0 };
-    nextDirection = { x: 1, y: 0 };
+    direction = { x: 0, y: 0 };
+    nextDirection = { x: 0, y: 0 };
     snake = [{ x: 15, y: 15 }];
     placeFood();
     gameActive = true;
@@ -93,18 +105,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function loop() {
     if (!gameActive) return;
-    direction = nextDirection.x || nextDirection.y ? nextDirection : direction;
-    if (!direction.x && !direction.y) {
+    if (!nextDirection.x && !nextDirection.y) {
       scheduleNext();
       return;
     }
 
+    direction = nextDirection;
     const head = {
       x: snake[0].x + direction.x,
       y: snake[0].y + direction.y,
     };
 
-    if (head.x < 0 || head.x >= TILE_COUNT || head.y < 0 || head.y >= TILE_COUNT || snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+    if (
+      head.x < 0 ||
+      head.x >= TILE_COUNT ||
+      head.y < 0 ||
+      head.y >= TILE_COUNT ||
+      snake.some(segment => segment.x === head.x && segment.y === head.y)
+    ) {
       gameOver();
       return;
     }
@@ -131,33 +149,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('keydown', event => {
     const key = event.key.toLowerCase();
-    if (!gameActive && key === 'r') {
-      resetGame();
-      return;
-    }
+    const movementKeys = ['w', 'a', 's', 'd', 'arrowup', 'arrowleft', 'arrowdown', 'arrowright'];
+
     switch (key) {
       case 'w':
       case 'arrowup':
+        if (!gameActive) startGame();
         setDirection({ x: 0, y: -1 });
         break;
       case 's':
       case 'arrowdown':
+        if (!gameActive) startGame();
         setDirection({ x: 0, y: 1 });
         break;
       case 'a':
       case 'arrowleft':
+        if (!gameActive) startGame();
         setDirection({ x: -1, y: 0 });
         break;
       case 'd':
       case 'arrowright':
+        if (!gameActive) startGame();
         setDirection({ x: 1, y: 0 });
         break;
+      case 'r':
+        if (!gameActive) startGame();
+        break;
+      default:
+        if (!gameActive && movementKeys.includes(key)) {
+          startGame();
+        }
     }
   });
 
-  restartButton.addEventListener('click', resetGame);
+  startButton.addEventListener('click', startGame);
 
   setText();
+  placeFood();
+  updateOverlay('start');
   draw();
-  scheduleNext();
 });

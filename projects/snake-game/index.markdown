@@ -13,11 +13,11 @@ comments: false
   </div>
   <div class="snake-game-board">
     <canvas id="snakeCanvas" width="600" height="600"></canvas>
-    <div id="snakeOverlay" class="snake-overlay">
+    <div id="snakeOverlay" class="snake-overlay visible">
       <div class="snake-overlay-card">
-        <h2>Game Over</h2>
-        <p>Press <strong>R</strong> or click restart to play again.</p>
-        <button id="snakeRestart" class="snake-button">Restart</button>
+        <h2 id="snakeOverlayTitle">Ready to play?</h2>
+        <p id="snakeOverlayMessage">Press Start or use arrow keys/WASD to begin.</p>
+        <button id="snakeStart" class="snake-button">Start</button>
       </div>
     </div>
   </div>
@@ -31,8 +31,8 @@ comments: false
 .snake-game-status {
   display: flex;
   justify-content: space-between;
-  color: #2b303a;
-  font-weight: bold;
+  color: #2f4f6d;
+  font-weight: 700;
   margin-bottom: 14px;
 }
 .snake-game-board {
@@ -40,14 +40,15 @@ comments: false
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  box-shadow: 0 18px 40px rgba(0,0,0,0.15);
-  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+  border-radius: 20px;
   overflow: hidden;
+  border: 1px solid rgba(99, 130, 171, 0.15);
 }
 #snakeCanvas {
   display: block;
   width: 100%;
-  background: #f7f1dc;
+  background: #eef7ff;
 }
 .snake-overlay {
   position: absolute;
@@ -65,33 +66,34 @@ comments: false
   visibility: visible;
 }
 .snake-overlay-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 24px 26px;
+  background: #f6fbff;
+  border-radius: 20px;
+  padding: 26px 28px;
   text-align: center;
-  max-width: 320px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+  max-width: 340px;
+  box-shadow: 0 22px 55px rgba(118, 143, 173, 0.16);
 }
 .snake-overlay-card h2 {
   margin: 0 0 10px;
-  font-size: 28px;
-  color: #1f2b39;
+  font-size: 30px;
+  color: #1d3f5c;
 }
 .snake-overlay-card p {
   margin: 0 0 18px;
-  color: #45505f;
-  line-height: 1.5;
+  color: #456073;
+  line-height: 1.6;
 }
 .snake-button {
   display: inline-block;
   border: none;
-  background: #84c67a;
-  color: #10210b;
-  padding: 12px 26px;
-  border-radius: 12px;
+  background: #5a92c1;
+  color: #ffffff;
+  padding: 14px 30px;
+  border-radius: 14px;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 12px 25px rgba(30, 86, 129, 0.18);
 }
 .snake-button:hover {
   transform: translateY(-1px);
