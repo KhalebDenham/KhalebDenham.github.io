@@ -6,7 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const overlay = document.getElementById('snakeOverlay');
   const overlayTitle = document.getElementById('snakeOverlayTitle');
   const overlayMessage = document.getElementById('snakeOverlayMessage');
+  const nicknameInput = document.getElementById('snakeNicknameInput');
+  const nicknameError = document.getElementById('snakeNicknameError');
   const startButton = document.getElementById('snakeStart');
+  const leaderboardEl = document.getElementById('snakeLeaderboard');
 
   const GRID = 20;
   const TILE_COUNT = 30;
@@ -22,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let food = { x: 10, y: 10 };
   let gameActive = false;
   let timer = null;
+  let currentPlayer = '';
 
   function setText() {
     scoreEl.textContent = `Score: ${score}`;
@@ -60,8 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateOverlay(type) {
     overlay.classList.add('visible');
     if (type === 'start') {
-      overlayTitle.textContent = 'Ready to play?';
-      overlayMessage.textContent = 'Press Start or use arrow keys/WASD to begin.';
+      overlayTitle.textContent = 'Enter your 3-character nickname';
+      overlayMessage.textContent = 'Your score will be saved with a 3-character name.';
       startButton.textContent = 'Start';
     } else {
       overlayTitle.textContent = 'Game Over';
@@ -74,14 +78,106 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.classList.remove('visible');
   }
 
-  function gameOver() {
-    gameActive = false;
-    if (score > highScore) {
-      highScore = score;
+  function sanitizeNickname(value) {
+    return String(value || '').trim().toUpperCase();
+  }
+
+  function validateNickname(name) {
+    return /^[A-Z0-9]{3}$/.test(name);
+  }
+
+  function updateNicknameError(message) {
+    nicknameError.textContent = message;
+  }
+
+  function loadLeaderboard() {
+    try {
+      return JSON.parse(localStorage.getItem('snakeLeaderboard') || '[]');
+    } catch (_) {
+      return [];
     }
-    setText();
-    updateOverlay('gameover');
-    stopLoop();
+  }
+
+  function saveLeaderboard(list) {
+    localStorage.setItem('snakeLeaderboard', JSON.stringify(list));
+  }
+
+  function renderLeaderboard() {
+    const leaderboard = loadLeaderboard();
+    leaderboardEl.innerHTML = '';
+
+    if (!leaderboard.length) {
+      const emptyItem = document.createElement('li');
+      emptyItem.className = 'snake-leaderboard-empty';
+      emptyItem.textContent = 'No scores yet. Play to save your first score.';
+      leaderboardEl.appendChild(emptyItem);
+      return;
+    }
+
+    leaderboard.forEach(entry => {
+      const item = document.createElement('li');
+      const nameSpan = document.createElement('span');
+      const scoreStrong = document.createElement('strong');
+
+      nameSpan.textContent = entry.name;
+      scoreStrong.textContent = entry.score;
+
+      item.appendChild(nameSpan);
+      item.appendChild(scoreStrong);
+      leaderboardEl.appendChild(item);
+    });
+  }
+
+  function getStoredNickname() {
+    return sanitizeNickname(localStorage.getItem('snakeNickname'));
+  }
+
+  function setStoredNickname(name) {
+    localStorage.setItem('snakeNickname', name);
+  }
+
+  function loadHighScoreFromLeaderboard() {
+    const leaderboard = loadLeaderboard();
+    return leaderboard.length ? Math.max(...leaderboard.map(entry => entry.score)) : 0;
+  }
+
+  function recordScore() {
+    if (score <= 0 || !currentPlayer) return;
+
+    const leaderboard = loadLeaderboard();
+    leaderboard.push({
+      name: currentPlayer,
+      score,
+      created: new Date().toISOString(),
+    });
+
+    leaderboard.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.created.localeCompare(b.created);
+    });
+
+    saveLeaderboard(leaderboard.slice(0, 10));
+    highScore = loadHighScoreFromLeaderboard();
+  }
+
+  function attemptStart(directionHint) {
+    const nickname = sanitizeNickname(nicknameInput.value || getStoredNickname());
+
+    if (!validateNickname(nickname)) {
+      updateNicknameError('Please enter exactly 3 letters or digits.');
+      return false;
+    }
+
+    currentPlayer = nickname;
+    setStoredNickname(currentPlayer);
+    updateNicknameError('');
+
+    if (directionHint) {
+      nextDirection = directionHint;
+    }
+
+    startGame();
+    return true;
   }
 
   function startGame() {
@@ -147,45 +243,56 @@ document.addEventListener('DOMContentLoaded', () => {
     nextDirection = newDirection;
   }
 
+  function gameOver() {
+    gameActive = false;
+    if (score > highScore) {
+      highScore = score;
+    }
+    recordScore();
+    setText();
+    renderLeaderboard();
+    updateOverlay('gameover');
+    stopLoop();
+  }
+
   document.addEventListener('keydown', event => {
     const key = event.key.toLowerCase();
-    const movementKeys = ['w', 'a', 's', 'd', 'arrowup', 'arrowleft', 'arrowdown', 'arrowright'];
+    const directionMap = {
+      w: { x: 0, y: -1 },
+      arrowup: { x: 0, y: -1 },
+      s: { x: 0, y: 1 },
+      arrowdown: { x: 0, y: 1 },
+      a: { x: -1, y: 0 },
+      arrowleft: { x: -1, y: 0 },
+      d: { x: 1, y: 0 },
+      arrowright: { x: 1, y: 0 },
+    };
 
-    switch (key) {
-      case 'w':
-      case 'arrowup':
-        if (!gameActive) startGame();
-        setDirection({ x: 0, y: -1 });
-        break;
-      case 's':
-      case 'arrowdown':
-        if (!gameActive) startGame();
-        setDirection({ x: 0, y: 1 });
-        break;
-      case 'a':
-      case 'arrowleft':
-        if (!gameActive) startGame();
-        setDirection({ x: -1, y: 0 });
-        break;
-      case 'd':
-      case 'arrowright':
-        if (!gameActive) startGame();
-        setDirection({ x: 1, y: 0 });
-        break;
-      case 'r':
-        if (!gameActive) startGame();
-        break;
-      default:
-        if (!gameActive && movementKeys.includes(key)) {
-          startGame();
-        }
+    if (!gameActive && key === 'r') {
+      attemptStart();
+      return;
+    }
+
+    if (directionMap[key]) {
+      if (!gameActive) {
+        attemptStart(directionMap[key]);
+        return;
+      }
+
+      setDirection(directionMap[key]);
     }
   });
 
-  startButton.addEventListener('click', startGame);
+  startButton.addEventListener('click', () => attemptStart());
 
+  const storedNickname = getStoredNickname();
+  if (storedNickname) {
+    nicknameInput.value = storedNickname;
+  }
+
+  highScore = loadHighScoreFromLeaderboard();
   setText();
-  placeFood();
+  renderLeaderboard();
   updateOverlay('start');
   draw();
 });

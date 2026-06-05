@@ -15,12 +15,24 @@ comments: false
     <canvas id="snakeCanvas" width="600" height="600"></canvas>
     <div id="snakeOverlay" class="snake-overlay visible">
       <div class="snake-overlay-card">
-        <h2 id="snakeOverlayTitle">Ready to play?</h2>
-        <p id="snakeOverlayMessage">Press Start or use arrow keys/WASD to begin.</p>
+        <h2 id="snakeOverlayTitle">Enter your 3-character nickname</h2>
+        <p id="snakeOverlayMessage">Your score will be saved with a 3-character name.</p>
+        <input id="snakeNicknameInput" class="snake-input" maxlength="3" placeholder="ABC" autocomplete="off" />
+        <div id="snakeNicknameError" class="snake-error"></div>
         <button id="snakeStart" class="snake-button">Start</button>
       </div>
     </div>
   </div>
+</div>
+
+<div class="snake-scoreboard">
+  <div class="snake-scoreboard-header">
+    <h3>Leaderboard</h3>
+    <span class="snake-scoreboard-note">Saved in your browser</span>
+  </div>
+  <ul id="snakeLeaderboard" class="snake-leaderboard-list">
+    <li class="snake-leaderboard-empty">No scores yet. Play to save your first score.</li>
+  </ul>
 </div>
 
 <style>
@@ -97,5 +109,73 @@ comments: false
 }
 .snake-button:hover {
   transform: translateY(-1px);
+}
+.snake-input {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(74, 121, 160, 0.3);
+  background: #eef7ff;
+  color: #1d3f5c;
+  font-size: 18px;
+  text-align: center;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.snake-error {
+  min-height: 18px;
+  margin-bottom: 16px;
+  color: #b63c47;
+  font-size: 14px;
+}
+.snake-scoreboard {
+  max-width: 680px;
+  margin: 24px auto 0;
+  padding: 18px 22px;
+  background: #f8fbff;
+  border: 1px solid rgba(90, 146, 193, 0.16);
+  border-radius: 18px;
+}
+.snake-scoreboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.snake-scoreboard-header h3 {
+  margin: 0;
+  font-size: 22px;
+  color: #1d3f5c;
+}
+.snake-scoreboard-note {
+  color: #5a7a98;
+  font-size: 14px;
+}
+.snake-leaderboard-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.snake-leaderboard-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid rgba(84, 144, 201, 0.12);
+  margin-bottom: 10px;
+  color: #2f4f6d;
+}
+.snake-leaderboard-list li:last-child {
+  margin-bottom: 0;
+}
+.snake-leaderboard-empty {
+  padding: 14px;
+  color: #5a7a98;
+  background: rgba(90, 146, 193, 0.06);
+  text-align: center;
 }
 </style>
