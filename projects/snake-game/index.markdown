@@ -97,5 +97,3 @@ comments: false
   transform: translateY(-1px);
 }
 </style>
-
-<script src="{{ '/assets/js/snake-game.js' | relative_url }}"></script>

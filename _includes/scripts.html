@@ -5,6 +5,9 @@
     <script src="{{ site.url }}/assets/js/jquery.magnific-popup.min.js"></script>
     <script src="{{ site.url }}/assets/js/jquery.fitvid.min.js"></script>
     <script src="{{ site.url }}/assets/js/scripts.js"></script>
+    {% if page.url == '/projects/snake-game/' %}
+    <script src="{{ '/assets/js/snake-game.js' | relative_url }}"></script>
+    {% endif %}
     {% if site.google.analytics %}
     <!-- Asynchronous Google Analytics snippet -->
     <script>
