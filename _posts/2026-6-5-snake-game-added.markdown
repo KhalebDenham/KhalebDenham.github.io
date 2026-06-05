@@ -9,11 +9,7 @@ categories: jekyll update
 The One with the Slithering...
 
 
-![Creature of Looseness](![alt text](image.png))
-
-
-Captains log  ------ >
-
+![The Very Creature](/img/image.png)
 
 
 Its been far too long, friends. I have yet to post anything of substance to my website, and I likely will continue to do so for a long time! But today, I bring you a simple game of snake. Originally, I had created this in python using Turtle and online tutorials. After introducing myself to the vsCode agent system, I was able to learn how to convert it to Jscript and bring its lovely information over to my website. It took some finnaegling, but I was successful inm the end. 

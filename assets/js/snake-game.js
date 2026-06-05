@@ -256,6 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.addEventListener('keydown', event => {
+    if (document.activeElement === nicknameInput) return;
+
     const key = event.key.toLowerCase();
     const directionMap = {
       w: { x: 0, y: -1 },
@@ -268,17 +270,14 @@ document.addEventListener('DOMContentLoaded', () => {
       arrowright: { x: 1, y: 0 },
     };
 
-    if (!gameActive && key === 'r') {
-      attemptStart();
+    if (!gameActive) {
+      if (directionMap[key]) {
+        setDirection(directionMap[key]);
+      }
       return;
     }
 
     if (directionMap[key]) {
-      if (!gameActive) {
-        attemptStart(directionMap[key]);
-        return;
-      }
-
       setDirection(directionMap[key]);
     }
   });
