@@ -67,23 +67,25 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateOverlay(type) {
     overlay.classList.add('visible');
     overlayMode = type;
+
     if (type === 'start') {
       overlayTitle.textContent = 'Ready to play?';
-      overlayMessage.textContent = 'Click Start to begin the game.';
+      overlayMessage.textContent = 'Click Start to begin the game. Use arrow keys or WASD once the game starts.';
       startButton.textContent = 'Start';
       nicknameInput.hidden = true;
       nicknameError.hidden = true;
       nicknameSaved.hidden = true;
     } else if (type === 'gameover') {
       overlayTitle.textContent = 'Game Over';
-      overlayMessage.textContent = `Your score is ${score}. Enter a 3-character nickname to save it.`;
+      overlayMessage.textContent = `Your score is ${score}. Enter a 3-character nickname, then click Save.`;
       startButton.textContent = 'Save';
       nicknameInput.hidden = false;
-      nicknameError.hidden = false;
+      nicknameError.hidden = true;
       nicknameSaved.hidden = true;
+      nicknameInput.focus();
     } else if (type === 'saved') {
       overlayTitle.textContent = 'Score saved!';
-      overlayMessage.textContent = 'Nickname saved! Click Restart to play again.';
+      overlayMessage.textContent = 'Nickname confirmed. Click Restart to play again.';
       startButton.textContent = 'Restart';
       nicknameInput.hidden = true;
       nicknameError.hidden = true;
@@ -189,12 +191,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!validateNickname(nickname)) {
       updateNicknameError('Please enter exactly 3 letters or digits.');
+      nicknameError.hidden = false;
       return false;
     }
 
     currentPlayer = nickname;
     setStoredNickname(currentPlayer);
     updateNicknameError('');
+    nicknameError.hidden = true;
     showNicknameSaved(currentPlayer);
     recordScore();
     renderLeaderboard();
@@ -276,6 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (score > highScore) {
       highScore = score;
     }
+    nicknameInput.value = '';
+    updateNicknameError('');
+    nicknameError.hidden = true;
     setText();
     renderLeaderboard();
     updateOverlay('gameover');
@@ -313,6 +320,13 @@ document.addEventListener('DOMContentLoaded', () => {
       saveNickname();
     } else if (overlayMode === 'saved') {
       startGame();
+    }
+  });
+
+  nicknameInput.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && overlayMode === 'gameover') {
+      event.preventDefault();
+      saveNickname();
     }
   });
 
