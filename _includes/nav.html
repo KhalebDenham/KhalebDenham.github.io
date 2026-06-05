@@ -118,12 +118,10 @@
         </li>
         {% for link in site.data.navigation %}
         {% if link.url contains 'http' %}
-        {% assign domain = '' %}
+            <li><a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.title }}</a></li>
         {% else %}
-        {% assign domain = site.url %}
+            <li><a href="{{ link.url | relative_url }}">{{ link.title }}</a></li>
         {% endif %}
-        <li><a href="{{ domain }}{{ link.url }}" {% if link.url contains 'http' %}target="_blank"
-                rel="noopener noreferrer" {% endif %}>{{ link.title }}</a></li>
         {% endfor %}
     </ul><!-- /.dl-menu -->
 </nav><!-- /.dl-menuwrapper -->
